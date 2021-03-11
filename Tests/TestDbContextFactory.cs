@@ -4,36 +4,34 @@ using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
-public class TestDbContextFactory : IDisposable
+namespace ContactsBackendDotnet.Tests
 {
-    private DbConnection _connection;
-
-    private DbContextOptions<ContactContext> CreateOptions()
+    public class TestDbContextFactory : IDisposable
     {
-        return new DbContextOptionsBuilder<ContactContext>()
-            .UseSqlite(_connection).Options;
-    }
+        private DbConnection _connection;
 
-    public async Task<ContactContext> CreateContextAsync()
-    {
-        if (_connection == null)
+        private DbContextOptions<ContactContext> CreateOptions()
         {
+            return new DbContextOptionsBuilder<ContactContext>()
+                .UseSqlite(_connection).Options;
+        }
+
+        public async Task<ContactContext> CreateContextAsync()
+        {
+            if (_connection != null) 
+                return new ContactContext(CreateOptions());
+        
             _connection = new SqliteConnection("DataSource=:memory:");
             await _connection.OpenAsync();
 
-            var options = CreateOptions();
-            using (var context = new ContactContext(options))
-            {
-                await context.Database.EnsureCreatedAsync();
-            }
+            await using var context = new ContactContext(CreateOptions());
+            await context.Database.EnsureCreatedAsync();
+            return new ContactContext(CreateOptions());
         }
-        return new ContactContext(CreateOptions());
-    }
 
-    public void Dispose()
-    {
-        if (_connection != null)
+        public void Dispose()
         {
+            if (_connection == null) return;
             _connection.Dispose();
             _connection = null;
         }

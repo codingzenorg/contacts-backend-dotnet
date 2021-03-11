@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using ContactsBackendDotnet.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -28,7 +27,7 @@ namespace ContactsBackendDotnet.Controllers
             return await _context.Contacts.ToListAsync();
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:guid}")]
         public async Task<ActionResult<Contact>> Get(Guid id)
         {
             var item = await _context.Contacts.FindAsync(id);
@@ -45,10 +44,10 @@ namespace ContactsBackendDotnet.Controllers
             _context.Contacts.Add(value);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(Get), new { id = value.Id }, value);
+            return CreatedAtAction(nameof(Get), new { value.Id }, value);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id:guid}")]
         public async Task<IActionResult> Update(Contact value, Guid id)
         {
             if (!id.Equals(value.Id))
@@ -68,7 +67,7 @@ namespace ContactsBackendDotnet.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var item = await _context.Contacts.FindAsync(id);

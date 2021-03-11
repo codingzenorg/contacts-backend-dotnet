@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ContactsBackendDotnet.Migrations
 {
     [DbContext(typeof(ContactContext))]
-    [Migration("20200625135849_InitialCreate")]
+    [Migration("20210311095215_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
